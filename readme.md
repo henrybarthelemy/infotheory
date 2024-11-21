@@ -1,12 +1,10 @@
 ## Setup
 
 For setup do 
-```pip3 install -r requirements.txt```
+```pip3 install -r -u requirements.txt```
 or depending on your pip installation
-```pip install -r requirements.txt```
+```pip install -r -u requirements.txt```
 instead.
-
-I pip froze my setup. This is an older setup from Novemember 2022. It will not line up with modern versions of software and code may not be forward compatible.
 
 ### Manim
 

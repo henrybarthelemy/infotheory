@@ -9,7 +9,7 @@ class LloydsAlgorithm(Scene):
         # Parameters
         num_points = 30
         num_clusters = 3
-        num_iterations = 4
+        num_iterations = 10
 
         # Generate random points in 2D space
         points_x = np.random.rand(num_points) * 6 - 3
@@ -35,8 +35,9 @@ class LloydsAlgorithm(Scene):
             new_centroids = update_centroids(points, labels, num_clusters)
             self.play(*[centroid_dot.animate.move_to((new_position[0], new_position[1], 0)) for centroid_dot, new_position in zip(centroid_dots, new_centroids)], run_time=1)
             # Update centroids for the next iteration
-            frame_data = self.camera.get_image()
-            frame_data.save(f"media/images/scribe3/frame_iteration_{iteration_num}.png")
+            if iteration_num != num_iterations - 1:
+                frame_data = self.camera.get_image()
+                frame_data.save(f"media/images/scribe3/frame_iteration_{iteration_num}.png")
             centroids = new_centroids
             self.wait(0.5)
 

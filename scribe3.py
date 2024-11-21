@@ -1,8 +1,11 @@
 from manim import *
 import numpy as np
+from PIL import Image
 
 class LloydsAlgorithm(Scene):
     def construct(self):
+        np.random.seed(55) # Seed is 55 in the slide images
+
         # Parameters
         num_points = 30
         num_clusters = 3
@@ -22,7 +25,9 @@ class LloydsAlgorithm(Scene):
         centroid_dots = VGroup(*[Dot(point=(coord[0], coord[1], 0), color=YELLOW).scale(1.2) for coord in centroids])
         self.add(centroid_dots)
 
-        for _ in range(num_iterations):
+        for iteration_num in range(num_iterations):
+            frame_data = self.camera.get_image()
+            frame_data.save(f"media/images/scribe3/frame_iteration_{iteration_num}.png")
             # Assign points to nearest centroids and color them
             labels = assign_clusters(points, centroids)
             for i, dot in enumerate(dots):
@@ -30,9 +35,7 @@ class LloydsAlgorithm(Scene):
 
             # Update centroid positions and animate the movement of centroids
             new_centroids = update_centroids(points, labels, num_clusters)
-            for j, (centroid_dot, new_position) in enumerate(zip(centroid_dots, new_centroids)):
-                self.play(centroid_dot.animate.move_to((new_position[0], new_position[1], 0)), run_time=1)
-
+            self.play(*[centroid_dot.animate.move_to((new_position[0], new_position[1], 0)) for centroid_dot, new_position in zip(centroid_dots, new_centroids)], run_time=1)
             # Update centroids for the next iteration
             centroids = new_centroids
             self.wait(0.5)  # Pause to observe each iteration

@@ -26,19 +26,20 @@ class LloydsAlgorithm(Scene):
         self.add(centroid_dots)
 
         for iteration_num in range(num_iterations):
-            frame_data = self.camera.get_image()
-            frame_data.save(f"media/images/scribe3/frame_iteration_{iteration_num}.png")
             # Assign points to nearest centroids and color them
             labels = assign_clusters(points, centroids)
             for i, dot in enumerate(dots):
                 dot.set_color([RED, BLUE, GREEN][labels[i]])  # Colors for each cluster
-
+            
             # Update centroid positions and animate the movement of centroids
             new_centroids = update_centroids(points, labels, num_clusters)
             self.play(*[centroid_dot.animate.move_to((new_position[0], new_position[1], 0)) for centroid_dot, new_position in zip(centroid_dots, new_centroids)], run_time=1)
             # Update centroids for the next iteration
+            frame_data = self.camera.get_image()
+            frame_data.save(f"media/images/scribe3/frame_iteration_{iteration_num}.png")
             centroids = new_centroids
-            self.wait(0.5)  # Pause to observe each iteration
+            self.wait(0.5)
+
 
 def initialize_centroids(X, k):
     """Randomly initialize k centroids from the dataset."""

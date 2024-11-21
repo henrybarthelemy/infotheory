@@ -1,59 +1,53 @@
 from manim import *
-from scipy.stats import poisson
-from scipy.stats import binom
-from scipy.stats import norm
-import math
+import numpy as np
 
-
-class BinomialToPoison(Scene):
+class LloydsAlgorithm(Scene):
     def construct(self):
-        n = DecimalNumber(10)
-        p = ValueTracker(0.2)
-        curDel = ValueTracker(2)
+        # Parameters
+        num_points = 30
+        num_clusters = 3
+        num_iterations = 4
 
-        axesP = Axes(
-                x_range=[0, 7, 1],
-                y_range=[0, 0.6, 0.1], 
-                x_length = 9.5,
-                axis_config={"color": BLUE,
-                "include_numbers": True},
-            ).scale(0.6).to_edge(RIGHT, buff = 0.5)
-
-        #creating the graph
-        graphP = always_redraw(lambda :
-            axesP.plot(lambda x: poisson._pmf(x, curDel.get_value()), color=WHITE)
-        )
-        labelP = always_redraw(lambda :
-            Tex("Y $\sim$ Poisson(" + str(round(curDel.get_value())) + ")").next_to(graphP, DOWN, buff=0.5).scale(0.7)
-        )   
-
-        
-        chart = always_redraw(lambda :
-            BarChart(
-                values = self.binomialDis(n.get_value(), p.get_value()),
-                bar_names = None,
-                y_range = [-0.1, 1, 0.2],
-                y_length = 6,
-                x_length=  9.5,
-                x_axis_config={"font_size": 36},
-            ).scale(0.6).to_edge(LEFT, buff = 0.5))
-        
-        labelB = always_redraw(lambda :
-            Tex("X $\sim$ Binomial(" + str(round(n.get_value())) + ", " + str(round(p.get_value(), 3)) + ")").next_to(chart, DOWN, buff=0.5).scale(0.7)
-        )   
+        # Generate random points in 2D space
+        points_x = np.random.rand(num_points) * 6 - 3  
+        points_y = np.random.rand(num_points) * 6 - 3  
         
 
+        # Create a group of dots at the random coordinates
+        dots = VGroup(*[Dot(point=(coord[0], coord[1], 0)) for coord in np.column_stack((points_x, points_y))])
 
-        self.play(Create(axesP))
-        self.play(Create(graphP), Create(labelP), Create(labelB), Create(chart))
-        self.wait(3) 
+        # Create point dots in Manim
+        # point_dots = VGroup(*[Dot(point=coords) for coords in points])
+        self.add(dots)
 
-    def binomialDis(self, n, p):
-        r_values = list(range(n + 1))
-        dist = [round(binom.pmf(r, n, p), 2) for r in r_values]
-        return dist
 
+def initialize_centroids(X, k):
+    """Randomly initialize k centroids from the dataset."""
+    indices = np.random.choice(len(X), k, replace=False)
+    return X[indices]
+
+def assign_clusters(X, centroids):
+    """Assign each data point to the closest centroid."""
+    distances = np.linalg.norm(X[:, np.newaxis] - centroids, axis=2)
+    return np.argmin(distances, axis=1)
+
+def update_centroids(X, labels, k):
+    """Update centroid positions as the mean of assigned points."""
+    new_centroids = np.array([X[labels == i].mean(axis=0) for i in range(k)])
+    return new_centroids
+
+def lloyds_algorithm(X, k, max_iters=100, tol=1e-4):
+    """Performs K-means clustering using Lloyd's algorithm."""
+    centroids = initialize_centroids(X, k)
     
+    for i in range(max_iters):
+        old_centroids = centroids
+        labels = assign_clusters(X, centroids)
+        centroids = update_centroids(X, labels, k)
 
-
+        # Check for convergence
+        if np.all(np.linalg.norm(centroids - old_centroids, axis=1) < tol):
+            break
+            
+    return labels, centroids
 

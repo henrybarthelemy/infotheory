@@ -93,7 +93,7 @@ if __name__ == "__main__":
     plt.title("Convergence to True Stationary Distribution (Mean Absolute Difference)")
     plt.legend()
     plt.grid()
-    plt.savefig("simulation_plot.png", dpi=300, bbox_inches='tight')  
+    plt.savefig("scribe4media/simulation_plot.png", dpi=300, bbox_inches='tight')  
     plt.show()
 
     plt.figure(figsize=(10, 6))
@@ -105,7 +105,7 @@ if __name__ == "__main__":
     plt.title("Convergence to True Stationary Distribution (Mean Absolute Difference)")
     plt.legend()
     plt.grid()
-    plt.savefig("iter_guess_plot.png", dpi=300, bbox_inches='tight')  
+    plt.savefig("scribe4media/iter_guess_plot.png", dpi=300, bbox_inches='tight')  
     plt.show()
    
     # Print final state frequencies

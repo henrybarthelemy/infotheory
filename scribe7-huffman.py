@@ -62,23 +62,17 @@ def huffman_decode(encoded_text, root):
             current_node = root
     return ''.join(decoded_text)
 
-
-# Example usage:
 if __name__ == "__main__":
     text = "abcabc"
     print(f"Original Text: {text}")
 
-    # Build the Huffman Tree and Code Map
     huffman_tree = build_huffman_tree2([0.25, 0.2, 0.15, 0.15, 0.25], ['a', 'b', 'c', 'd', 'e'])
     code_map = build_codes(huffman_tree)
-
     # Encode and Decode
     encoded_text = huffman_encode(text, code_map)
     print(f"Encoded Text: {encoded_text}")
-
     decoded_text = huffman_decode(encoded_text, huffman_tree)
     print(f"Decoded Text: {decoded_text}")
-
     # Display Huffman Codes
     print("\nCharacter Codes:")
     for char, code in code_map.items():
